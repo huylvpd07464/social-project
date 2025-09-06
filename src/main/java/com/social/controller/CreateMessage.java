@@ -1,45 +1,46 @@
 package com.social.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.social.models.Comment;
+import com.social.models.Message;
 import com.social.models.User;
-import com.social.service.CommentService;
+import com.social.service.MessageService;
 import com.social.service.UserService;
 
 @RestController
-public class CommentController {
-
+public class CreateMessage {
 	@Autowired
-	private CommentService commentService;
+	private MessageService messageService;
 	
 	@Autowired
 	private UserService userService;
 	
-	@PostMapping("/api/comments/post/{postId}")
-	public Comment createComment(
-			@RequestBody Comment comment, 
+	@PostMapping("/api/messages/chat/{chatId}")
+	public Message createMessage(
+			@RequestBody Message req, 
 			@RequestHeader("Authorization") String jwt,
-			@PathVariable("postId") Integer postId) throws Exception {
+			@PathVariable Integer chatId) throws Exception {
 		
 		User user = userService.findUserByJwt(jwt);
-		Comment createdComment = commentService.createComment(comment, postId, user.getId());
-		return createdComment;
+		Message message = messageService.createMessage(user, chatId, req);
+		return message;
 	}
 	
-	@PutMapping("/api/comments/like/{commentId}")
-	public Comment likeComment(
+	@GetMapping("/api/messages/chat/{chatId}")
+	public List<Message> findChatsMessage(
 			@RequestHeader("Authorization") String jwt,
-			@PathVariable("commentId") Integer commentId) throws Exception {
+			@PathVariable Integer chatId) throws Exception {
 		
 		User user = userService.findUserByJwt(jwt);
-		Comment likedComment = commentService.likeComment(commentId, user.getId());
-		return likedComment;
+		List<Message> messages = messageService.findChatsMessages(chatId);
+		return messages;
 	}
 }
