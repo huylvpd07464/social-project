@@ -87,7 +87,7 @@ public class PostController {
 		
 		return new ResponseEntity<Post>(post, HttpStatus.ACCEPTED);
 	}
-	
+	 
 	@PutMapping("/api/posts/like/{postId}")
 	public ResponseEntity<Post> likePostHandler(
 			@PathVariable Integer postId, 
